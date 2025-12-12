@@ -649,26 +649,30 @@ server <- function(input, output, session) {
   # Iniciar módulo nuevo (ficha y gráficos)
   modFichaGraficoServer("ficha")
   
-  # Datos reactivos (archivo local) - versión con depuración extendida
+  # Datos reactivos con normalización de nombres de columna
   datos <- reactive({
     req(file.exists("ciberdelitos_uruguay.csv"))
     df <- read_csv(
       file.path(getwd(), "ciberdelitos_uruguay.csv"),
       show_col_types = FALSE
-    ) |>
+    )
+    
+    # Normalizar nombres de columnas para evitar problemas de encoding en Render
+    colnames(df) <- c("año", "tipo_delito", "denuncias")
+    
+    df <- df |>
       filter(
         tipo_delito == input$tipo_delito,
         año >= input$rango_anios[1],
         año <= input$rango_anios[2]
       )
     
-    # Depuración: imprime las primeras filas y el número de filas tras el filtro
-    print(head(df))
+    # Depuración: imprime nombres y filas
+    print(colnames(df))
     print(paste("Filas después del filtro:", nrow(df)))
     
     df
   })
-  
   # Gráfico con depuración
   output$grafico <- renderPlotly({
     df <- datos()
