@@ -56,7 +56,7 @@ modHipotesisUI <- function(id) {
                p("Completá las tres partes de tu hipótesis en la tabla y luego hacé clic en “Generar hipótesis completa”."),br(),
                DT::dataTableOutput(ns("tabla_construccion")),
                br(),
-               actionButton(ns("generar_hipótesis"), "Generar hipótesis completa", icon = icon("flask")),
+               actionButton(ns("generar_hipotesis"), "Generar hipótesis completa", icon = icon("flask")),
                verbatimTextOutput(ns("hipotesis_generada")),
                
                
@@ -625,8 +625,8 @@ ui <- fluidPage(
                ),
                mainPanel(
                  plotlyOutput("grafico"),
-                 verbatimTextOutput("analisis"),br(),br(),br(),
-                 DTOutput("tabla_datos"),br(),br(),br(),
+                 verbatimTextOutput("analisis"),
+                 DTOutput("tabla_datos"),
                  htmlOutput("nota_metodologica")
                )
              )
@@ -649,13 +649,23 @@ server <- function(input, output, session) {
   # Iniciar módulo nuevo (ficha y gráficos)
   modFichaGraficoServer("ficha")
   
-  # Datos reactivos (archivo local) - tu original
+  # Datos reactivos (archivo local) - versión con depuración
   datos <- reactive({
     req(file.exists("ciberdelitos_uruguay.csv"))
-    read_csv("ciberdelitos_uruguay.csv", show_col_types = FALSE) |>
-      filter(tipo_delito == input$tipo_delito,
-             año >= input$rango_anios[1],
-             año <= input$rango_anios[2])
+    df <- read_csv(
+      file.path(getwd(), "ciberdelitos_uruguay.csv"),
+      show_col_types = FALSE
+    ) |>
+      filter(
+        tipo_delito == input$tipo_delito,
+        año >= input$rango_anios[1],
+        año <= input$rango_anios[2]
+      )
+    
+    # Línea de depuración: imprime las primeras filas en los logs de Render
+    print(head(df))
+    
+    df
   })
   
   # Gráfico (original)
