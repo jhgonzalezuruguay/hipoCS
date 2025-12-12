@@ -669,16 +669,25 @@ server <- function(input, output, session) {
     df
   })
   
-  # Gráfico (original)
+  # Gráfico con depuración
   output$grafico <- renderPlotly({
     df <- datos()
+    
+    # Depuración: imprime el número de filas que llegan al gráfico
+    print(paste("Filas en datos() para el gráfico:", nrow(df)))
+    
     req(nrow(df) > 0)
+    
     p <- ggplot(df, aes(x = año, y = denuncias)) +
-      geom_line(linewidth = 1.2, color= "pink") +
+      geom_line(linewidth = 1.2, color = "pink") +
       geom_point(size = 2) +
-      labs(title = paste("Denuncias por", input$tipo_delito),
-           x = "Año", y = "Cantidad de denuncias") +
+      labs(
+        title = paste("Denuncias por", input$tipo_delito),
+        x = "Año",
+        y = "Cantidad de denuncias"
+      ) +
       theme_minimal()
+    
     ggplotly(p)
   })
   
