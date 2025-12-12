@@ -649,22 +649,22 @@ server <- function(input, output, session) {
   # Iniciar módulo nuevo (ficha y gráficos)
   modFichaGraficoServer("ficha")
   
-  # Datos reactivos con normalización de nombres de columna
+  # Datos reactivos embebidos en app.R
   datos <- reactive({
-    req(file.exists("ciberdelitos_uruguay.csv"))
-    df <- read_csv(
-      file.path(getwd(), "ciberdelitos_uruguay.csv"),
-      show_col_types = FALSE
+    # Definimos el dataset directamente en el código
+    df <- tibble::tibble(
+      anio = c(2018,2019,2020,2021,2022,2023,2024,
+               2018,2019,2020,2021,2022,2023,2024,
+               2018,2019,2020,2021,2022,2023,2024),
+      tipo_delito = c(rep("Estafa",7),
+                      rep("Acceso indebido",7),
+                      rep("Suplantación de identidad",7)),
+      denuncias = c(120,150,300,450,500,620,700,
+                    80,90,150,200,250,300,350,
+                    60,70,120,180,220,270,310)
     )
     
-    # Normalizar nombres de columnas para evitar problemas de encoding en Render
-    colnames(df) <- c("anio", "tipo_delito", "denuncias")
-    
     df <- df |>
-      mutate(
-        anio = as.numeric(anio),
-        denuncias = as.integer(denuncias)
-      ) |>
       filter(
         tipo_delito == input$tipo_delito,
         anio >= input$rango_anios[1],
