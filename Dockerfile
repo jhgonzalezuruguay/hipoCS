@@ -16,4 +16,4 @@ COPY app.R /srv/shiny-server/
 ENV PORT=8080
 
 # Comando de inicio de la app
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/hipoCS.R', host='0.0.0.0', port=as.numeric(Sys.getenv('PORT')))"]
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/app.R', host='0.0.0.0', port=as.numeric(Sys.getenv('PORT')))"]
