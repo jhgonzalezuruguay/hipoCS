@@ -10,7 +10,7 @@ RUN R -e "install.packages('DT')"
 RUN R -e "install.packages('tidyr')"
 
 # Copiar tu aplicación al contenedor
-COPY hipoCS.R /srv/shiny-server/
+COPY app.R /srv/shiny-server/
 
 # Render asigna el puerto en la variable de entorno PORT
 ENV PORT=8080
