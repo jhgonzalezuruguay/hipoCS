@@ -658,13 +658,17 @@ server <- function(input, output, session) {
     )
     
     # Normalizar nombres de columnas para evitar problemas de encoding en Render
-    colnames(df) <- c("año", "tipo_delito", "denuncias")
+    colnames(df) <- c("anio", "tipo_delito", "denuncias")
     
     df <- df |>
+      mutate(
+        anio = as.numeric(anio),
+        denuncias = as.integer(denuncias)
+      ) |>
       filter(
         tipo_delito == input$tipo_delito,
-        año >= input$rango_anios[1],
-        año <= input$rango_anios[2]
+        anio >= input$rango_anios[1],
+        anio <= input$rango_anios[2]
       )
     
     # Depuración: imprime nombres y filas
@@ -673,6 +677,7 @@ server <- function(input, output, session) {
     
     df
   })
+  
   # Gráfico con depuración
   output$grafico <- renderPlotly({
     df <- datos()
@@ -682,7 +687,7 @@ server <- function(input, output, session) {
     
     req(nrow(df) > 0)
     
-    p <- ggplot(df, aes(x = año, y = denuncias)) +
+    p <- ggplot(df, aes(x = anio, y = denuncias)) +
       geom_line(linewidth = 1.2, color = "pink") +
       geom_point(size = 2) +
       labs(
