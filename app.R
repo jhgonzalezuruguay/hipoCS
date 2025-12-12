@@ -649,7 +649,7 @@ server <- function(input, output, session) {
   # Iniciar módulo nuevo (ficha y gráficos)
   modFichaGraficoServer("ficha")
   
-  # Datos reactivos (archivo local) - versión con depuración
+  # Datos reactivos (archivo local) - versión con depuración extendida
   datos <- reactive({
     req(file.exists("ciberdelitos_uruguay.csv"))
     df <- read_csv(
@@ -662,8 +662,9 @@ server <- function(input, output, session) {
         año <= input$rango_anios[2]
       )
     
-    # Línea de depuración: imprime las primeras filas en los logs de Render
+    # Depuración: imprime las primeras filas y el número de filas tras el filtro
     print(head(df))
+    print(paste("Filas después del filtro:", nrow(df)))
     
     df
   })
